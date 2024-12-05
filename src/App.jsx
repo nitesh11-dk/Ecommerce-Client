@@ -15,6 +15,10 @@ import OrderConformation from './Componenets/OrderConformation';
 import ProductForm from './Componenets/product/ProductForm';
 import AppContext from './context/AppContext';
 import EditProduct from './Componenets/product/EditProject';
+import AdminPanel from './Componenets/ADMIN/Admin';
+import AllUsers from './Componenets/ADMIN/Alluser';
+import Orders from './Componenets/ADMIN/Orders';
+import OrderDetailed from './Componenets/ADMIN/OrderDetailed';
 
 const App = () => {
   const {isAdmin} = useContext(AppContext);
@@ -35,12 +39,19 @@ const App = () => {
          <Route path='/checkout' element={<Checkout/>}/>
          <Route path='/orderconfirmation' element={<OrderConformation/>}/>
 
-         <Route path='/update/:id' element={<EditProduct/>}/>
 
          {/* ? Admin  */}
             {isAdmin &&(
               <>
               <Route path='/addproduct' element={<ProductForm/>}/>
+              <Route path='/update/:id' element={<EditProduct/>}/>
+              <Route path='/adminpanel' element={<AdminPanel/>}>
+              
+              <Route path='/adminpanel/users' element={<AllUsers/>}/>
+              <Route path='/adminpanel/orders' element={<Orders/>}/>
+              <Route path='/adminpanel/orders/:id' element={<OrderDetailed/>}/>
+              
+              </Route>
               </>
             )
             }

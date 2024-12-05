@@ -128,6 +128,10 @@ const location = useLocation();
           <button onClick={clearFilters} className="btn btn-outline">
               Clear Filters
             </button>
+
+            {
+            isAdmin &&   <Link to={'/adminpanel'} className=' px-4 py-2  rounded-xl bg-gray-500 mr-8'>ADMIN</Link>
+          }
           <div>
            
           </div>
