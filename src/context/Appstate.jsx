@@ -100,7 +100,7 @@ const [isAdmin, setIsAdmin] = useState(false);
           setToken(token);
           setIsLoggedIn(true);
           setReload1(!reload1);
-          navigate("/");
+  
           // Save the token in localStorage
           localStorage.setItem("token", token);
           toast.success(response.data.message);
