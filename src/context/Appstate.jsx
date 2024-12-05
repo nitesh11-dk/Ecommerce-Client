@@ -258,6 +258,7 @@ const [isAdmin, setIsAdmin] = useState(false);
               withCredentials: true,
             }
           );
+          toast.success(response.data.message)
           setReload(!reload)
         }
       } catch (err) {
@@ -301,7 +302,7 @@ const [isAdmin, setIsAdmin] = useState(false);
               withCredentials: true,
             }
           );
-
+toast.success(response.data.message)
           setReload(!reload)
         }
       } catch (err) {

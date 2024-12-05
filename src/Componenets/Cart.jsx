@@ -23,7 +23,7 @@ const ShoppingCart = () => {
     return (
       <div className="text-center text-white mt-10">
         <h1 className="text-3xl">No items in the card </h1>
-      <Link to="/" className="btn text-xl btn-warning mt-4">Continue Shopping ...</Link>\
+      <Link to="/" className="btn text-xl btn-warning mt-4">Continue Shopping ...</Link>
       </div>
     )
   }
