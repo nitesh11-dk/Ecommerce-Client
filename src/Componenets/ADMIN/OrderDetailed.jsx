@@ -53,7 +53,7 @@ const OrderDetailed = () => {
    {
     order && (
       <>
-      {/* <DetailedOrder order={order}/> */}
+      <DetailedOrder order={order}/>
     <div className="flex justify-center mt-4">
       <button onClick={() => window.history.back()} className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600">
         Go Back
