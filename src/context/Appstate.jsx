@@ -404,7 +404,7 @@ const [isAdmin, setIsAdmin] = useState(false);
       try {
         if (localStorage.getItem("token")) {
           const token = localStorage.getItem("token");
-          let response = await axios.get(
+          let response = await axios.post(
             `${BASE_URL}/product/add`,productdata,
             {
               headers: {
@@ -415,17 +415,60 @@ const [isAdmin, setIsAdmin] = useState(false);
             }
           );
           // setUserOrder(response.data.orders)
-          console.log(response.data)
           toast.success(response.data.message);
-
+          setReload(!reload)
         }
       } catch (err) {
         console.log("Error in getting the address ", err);
       }
     }
+
+    const deleteProduct = async (id)=>{
+      try {
+        if (localStorage.getItem("token")) {
+          const token = localStorage.getItem("token");
+          let response = await axios.delete(
+            `${BASE_URL}/product/${id}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "Auth": token, 
+              },
+              withCredentials: true,
+            }
+          );
+          // setUserOrder(response.data.orders)
+          console.log(response.data)
+          toast.success(response.data.message);         
+          setReload(!reload)
+        }      
+      } catch (err) {     
+        console.log("Error in getting the address ", err);  
+      }
+    }
   
-
-
+    const updateProduct = async (id,data)=>{  
+      try {
+        if (localStorage.getItem("token")) {
+          const token = localStorage.getItem("token");
+          let response = await axios.put(
+            `${BASE_URL}/product/${id}`,data,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "Auth": token, 
+              },
+              withCredentials: true,
+            }
+          );
+          // console.log(response.data)
+          toast.success(response.data.message);         
+          setReload(!reload)
+        }      
+      } catch (err) {
+        console.log("Error in Updating the product ", err);
+      }
+    }
 
 
 
@@ -448,11 +491,11 @@ const [isAdmin, setIsAdmin] = useState(false);
           clearCart , 
           addToCart ,
           decreaseQuantity,
-          removeItem,addAddress,userAddress,getOrders,userOrder, getAddress
+          removeItem,addAddress,userAddress,getOrders,userOrder, getAddress,deleteProduct
           
 ,
           loginAdmin,isAdmin,
-          addProduct
+          addProduct,updateProduct ,products
         }}
       >
         {props.children}

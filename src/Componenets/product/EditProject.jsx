@@ -1,46 +1,63 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import AppContext from '../../context/AppContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import { BASE_URL } from '../../constants/config';
 
-function ProductForm() {
-  const {addProduct} = useContext(AppContext);
+
+function EditProduct() {
+  const {  updateProduct } = useContext(AppContext); 
+  const { id } = useParams(); 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "",
+    name: '',
     description: '',
     price: 0,
     image: '',
     category: '',
-    quantity: '',
+    quantity: 0,
   });
+
+  const fetchProduct = async () => {
+      try {
+          const response = await axios.get(`${BASE_URL}/product/${id}`, {
+              headers: {
+                  "Content-Type": "application/json",
+                  withCredentials: true
+              }
+          });
+          setFormData(response.data.product);
+      } catch (error) {
+          console.error("Error fetching product data:", error);
+      }
+  };
+
+  useEffect(() => {
+      fetchProduct();
+  }, [id]);
+
+if(!formData) return <div>Loading...</div>
+
+ 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    addProduct(formData);
-
-  setFormData({
-    name: "",
-    description: '',
-    price: '',
-    image: '',
-    category: '',
-    quantity: '',
-  })
-    navigate("/")
+    updateProduct(id, formData); 
+    navigate('/'); 
   };
 
   return (
     <div className="bg-gray-900 text-white min-h-screen flex justify-center items-center">
       <div className="bg-gray-800 p-6 rounded-lg w-full sm:w-96">
-        <h2 className="text-2xl font-bold mb-4">Product Form</h2>
+        <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
         <form onSubmit={handleFormSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium">Product Name</label>
@@ -112,7 +129,7 @@ function ProductForm() {
             type="submit"
             className="w-full bg-indigo-600 p-2 rounded-lg text-white font-semibold hover:bg-indigo-500"
           >
-            Submit
+            Update
           </button>
         </form>
       </div>
@@ -120,4 +137,4 @@ function ProductForm() {
   );
 }
 
-export default ProductForm;
+export default EditProduct;

@@ -2,8 +2,9 @@ import {Link} from 'react-router-dom'
 import AppContext from "../../context/AppContext";
 import {  toast } from "react-toastify";
 import { useContext } from 'react';
+import {  FaShoppingCart } from 'react-icons/fa';
 const Cards = ({products}) => {
-  const {  addToCart ,isLoggedIn } = useContext(AppContext);
+  const {  addToCart ,isLoggedIn,isAdmin,deleteProduct } = useContext(AppContext);
   if (!products) {
     return <div>Loading...</div>;
   }
@@ -31,6 +32,23 @@ const Cards = ({products}) => {
        
       </div>
     </Link>
+   <div className='gap-10 flex  justify-between px-8'>
+   {
+    isAdmin && (
+       
+  <div className='flex gap-4'>
+     <button className="btn bg-blue-500 w-fit  mt-6 px-4 text-xl text-white hover:bg-blue-700 transition-all duration-300"
+   >
+     <Link to={`/update/${product._id}`}>Edit</Link>
+   </button>
+  <button onClick={()=>deleteProduct(product._id)} className="btn btn-error w-fit px-4 text-xl  mt-6 text-white hover:bg-red-700 transition-all duration-300"
+   >
+     Delete
+   </button>
+  </div>
+    )
+   }
+   
     <button 
   onClick={(event) => {
     event.stopPropagation(); 
@@ -40,10 +58,11 @@ const Cards = ({products}) => {
       toast.error("Please log in to add items to the cart.");
     }
   }} 
-  className="btn btn-primary w-full mt-6 text-white hover:bg-indigo-700 transition-all duration-300"
+  className="btn btn-primary w-fit  mt-6 text-white hover:bg-indigo-700 px-4 text-xl transition-all duration-300"
 >
-  Add to Cart
+<FaShoppingCart/>
 </button>
+   </div>
      </div>
     ))}
   </div>
