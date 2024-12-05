@@ -3,7 +3,7 @@
   import axios from "axios";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../constants/config.js";
-import { useNavigate } from "react-router-dom";
+
 
   const Appstate = (props) => {
     const [products, setProducts] = useState([]);
@@ -20,7 +20,7 @@ const [userOrder, setUserOrder] = useState(null);
 const [isAdmin, setIsAdmin] = useState(false);
 
 
-const navigate = useNavigate()
+
 
     const fetchedProduct = async () => {
       try {
@@ -82,7 +82,6 @@ const navigate = useNavigate()
       setToken(null);
       setIsLoggedIn(false);
       setReload1(!reload1);
-      navigate("/login");
       localStorage.removeItem("token");
     };
 
