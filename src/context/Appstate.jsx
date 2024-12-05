@@ -3,6 +3,7 @@
   import axios from "axios";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../constants/config.js";
+import { useNavigate } from "react-router-dom";
 
   const Appstate = (props) => {
     const [products, setProducts] = useState([]);
@@ -13,10 +14,13 @@ import { BASE_URL } from "../constants/config.js";
    const [user, setUser] = useState(null);
 const [cart, setCart] = useState(null)
 const [reload ,setReload] = useState(false) ;
+const [reload1 ,setReload1] = useState(false) ;
 const [userAddress, setUserAddress] = useState(null)
 const [userOrder, setUserOrder] = useState(null);
 const [isAdmin, setIsAdmin] = useState(false);
 
+
+const navigate = useNavigate()
 
     const fetchedProduct = async () => {
       try {
@@ -54,6 +58,9 @@ const [isAdmin, setIsAdmin] = useState(false);
       getAddress();
     }, [token , reload]);
 
+    useEffect(() => {
+    }, [token , reload1]);
+
 
     // reload karne par logout nahi loga 
     useEffect(() => {
@@ -74,6 +81,8 @@ const [isAdmin, setIsAdmin] = useState(false);
     const logoutUser = () => {
       setToken(null);
       setIsLoggedIn(false);
+      setReload1(!reload1);
+      navigate("/login");
       localStorage.removeItem("token");
     };
 
@@ -91,16 +100,14 @@ const [isAdmin, setIsAdmin] = useState(false);
           // Set the token and login status
           setToken(token);
           setIsLoggedIn(true);
+          setReload1(!reload1);
+          navigate("/");
           // Save the token in localStorage
           localStorage.setItem("token", token);
           toast.success(response.data.message);
           return true 
           // Show success message
-        } else {
-          // Handle unexpected success = false cases
-          toast.error(response.data.message || "Login failed. Please try again.");
-          return false
-        }
+        } 
       } catch (error) {
         // Handle different error scenarios
         if (error.response) {
