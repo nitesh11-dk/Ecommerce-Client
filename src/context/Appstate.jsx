@@ -15,7 +15,7 @@ const [cart, setCart] = useState(null)
 const [reload ,setReload] = useState(false) ;
 const [userAddress, setUserAddress] = useState(null)
 const [userOrder, setUserOrder] = useState(null);
-
+const [isAdmin, setIsAdmin] = useState(false);
 
 
     const fetchedProduct = async () => {
@@ -61,9 +61,13 @@ const [userOrder, setUserOrder] = useState(null);
       if (lstoken) {
         setToken(lstoken);
         setIsLoggedIn(true);
+        checkAdmin();
     }
     }, []);
 
+
+
+    
 
     
     //  User 
@@ -112,6 +116,67 @@ const [userOrder, setUserOrder] = useState(null);
         }
       }
     };
+
+    const loginAdmin = async (email, password, adminKey) => {
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/user/loginadmin`,
+          { email, password, adminKey },
+          { headers: { "Content-Type": "application/json" } }
+        );
+    
+        // Check if the login was successful
+        if (response.data.success) {
+          const { token } = response.data;
+          // Set the token and login status
+          setToken(token);
+          setIsLoggedIn(true);
+          setIsAdmin(true);
+          // Save the token in localStorage
+          localStorage.setItem("token", token);
+          toast.success(response.data.message);
+          return true; // Login successful
+        } else {
+          // Handle unexpected success = false cases
+          toast.error(response.data.message || "Admin login failed. Please try again.");
+          return false; // Login failed
+        }
+      } catch (error) {
+        // Handle different error scenarios
+        if (error.response) {
+          // Server responded with a status other than 200
+          const { message } = error.response.data;
+          toast.error(message || "Server error. Please try again.");
+        } else if (error.request) {
+          // Request was made but no response received
+          toast.error("No response from server. Please check your network.");
+        } else {
+          // Something else happened
+          toast.error(`Admin login failed: ${error.message}`);
+        }
+        return false; // Return false in case of error
+      }
+    };
+
+    const checkAdmin = async () =>{
+      try{
+        if(localStorage.getItem("token")){
+         const token = localStorage.getItem("token");
+          let response = await axios.get(`${BASE_URL}/user/checkadmin`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Auth" : token
+               },
+               withCredentials: true ,
+        })
+      setIsAdmin(response.data.success)
+        }
+     }catch (err){
+          console.log("Error in checking that the user is admin or not ",err )
+     }
+
+      
+    }
     
 
     const registerUser = async (formData) => {
@@ -334,6 +399,30 @@ const [userOrder, setUserOrder] = useState(null);
       }
     };
     
+
+    const addProduct = async (productdata)=>{
+      try {
+        if (localStorage.getItem("token")) {
+          const token = localStorage.getItem("token");
+          let response = await axios.get(
+            `${BASE_URL}/product/add`,productdata,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "Auth": token, 
+              },
+              withCredentials: true,
+            }
+          );
+          // setUserOrder(response.data.orders)
+          console.log(response.data)
+          toast.success(response.data.message);
+
+        }
+      } catch (err) {
+        console.log("Error in getting the address ", err);
+      }
+    }
   
 
 
@@ -360,6 +449,10 @@ const [userOrder, setUserOrder] = useState(null);
           addToCart ,
           decreaseQuantity,
           removeItem,addAddress,userAddress,getOrders,userOrder, getAddress
+          
+,
+          loginAdmin,isAdmin,
+          addProduct
         }}
       >
         {props.children}

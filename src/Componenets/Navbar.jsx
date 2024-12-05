@@ -3,11 +3,14 @@ import { FaSearch, FaShoppingCart } from 'react-icons/fa';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AppContext from "../context/AppContext";
 import { toast } from 'react-toastify';
+import { GrUserAdmin } from "react-icons/gr";
+import { FaUserAstronaut } from "react-icons/fa";
+
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
-  const { setSearchFilter, isLoggedIn, logoutUser, setCategoryFilterState, clearFilters ,cart } = useContext(AppContext);
+  const { setSearchFilter, isLoggedIn, logoutUser, setCategoryFilterState, clearFilters ,cart ,isAdmin } = useContext(AppContext);
 
 
   let navigate = useNavigate();
@@ -26,7 +29,12 @@ const location = useLocation();
   return (
     <div>
       <div className="navbar bg-base-200 sm:px-20 sticky top-0 z-50 shadow-md">
-        <div className="navbar-start">
+        <div className="navbar-start flex  gap-2">
+          <div>
+            {
+              isAdmin ? (<GrUserAdmin className='text-3xl ' />):(<FaUserAstronaut  className='text-3xl '/>)
+            }
+          </div>
           <Link to="/" className="btn btn-ghost normal-case text-xl">E-comm</Link>
         </div>
 
@@ -77,7 +85,11 @@ const location = useLocation();
 
       {
          (location.pathname === '/') && (
+
           <div className="bg-base400 flex items-center justify-center  p-4">
+          {
+            isAdmin &&   <Link to={'/addproduct'} className=' px-4 py-2  rounded-xl bg-base-300 mr-8'>Add Product</Link>
+          }
         <div className="flex justify-between gap-10 items-center">
           <div className="flex gap-4">
   

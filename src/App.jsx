@@ -12,8 +12,12 @@ import ShoppingCart from './Componenets/Cart';
 import Address from './Componenets/Address';
 import Checkout from './Componenets/Checkout';
 import OrderConformation from './Componenets/OrderConformation';
+import ProductForm from './Componenets/product/ProductForm';
+import AppContext from './context/AppContext';
 
 const App = () => {
+  const {isAdmin} = useContext(AppContext);
+  
   return (
     <Router>
        <ToastContainer />
@@ -29,6 +33,16 @@ const App = () => {
          <Route path='/address' element={<Address/>}/>
          <Route path='/checkout' element={<Checkout/>}/>
          <Route path='/orderconfirmation' element={<OrderConformation/>}/>
+
+
+         {/* ? Admin  */}
+            {isAdmin &&(
+              
+              <Route path='/addproduct' element={<ProductForm/>}/>
+            )
+            }
+
+
       </Routes>
     </Router>
   );
