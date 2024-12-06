@@ -173,7 +173,7 @@ const [isAdmin, setIsAdmin] = useState(false);
                 "Content-Type": "application/json",
                 "Auth" : token
                },
-               
+
                withCredentials: true ,
         })
       setIsAdmin(response.data.success)
@@ -181,8 +181,6 @@ const [isAdmin, setIsAdmin] = useState(false);
      }catch (err){
           console.log("Error in checking that the user is admin or not ",err )
      }
-
-      
     }
     
 
