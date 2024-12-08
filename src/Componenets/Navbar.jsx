@@ -19,9 +19,6 @@ const Navbar = () => {
     setSearchFilter(query); 
   };
 
-  
-
-
 const location = useLocation();
   return (
     <div>
