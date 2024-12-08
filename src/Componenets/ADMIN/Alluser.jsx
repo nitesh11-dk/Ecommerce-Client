@@ -98,7 +98,7 @@ function AllUsers() {
               )}
               {currentUser && currentUser._id === user._id && (
                 <span className="absolute rounded-full top-1 left-1 bg-green-500 text-white text-xl font-semibold   h-6 w-6 flex items-center justify-center ">
-                  U
+                  U 
                 </span>
               )}
               <h2 className="text-2xl font-bold mb-4 text-gray-100">{user.name}</h2>
