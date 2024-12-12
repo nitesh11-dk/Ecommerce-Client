@@ -225,6 +225,52 @@ const [isAdmin, setIsAdmin] = useState(false);
       }
    }
 
+   const  updateProfile = async (formdata)=>{
+    try{
+       if(localStorage.getItem("token")){
+        const token = localStorage.getItem("token");
+         let response = await axios.post(`${BASE_URL}/user/editUser`, formdata, {
+           headers: {
+               "Content-Type": "application/json",
+               "Auth" : token
+              },
+              withCredentials: true ,
+       })
+      setUser(response.data.user)
+      toast.success(response.data.message)
+       }
+    }catch (err){
+         console.log("Error in feteching the user profile data",err )
+    }
+ }
+
+ 
+ const handleDeleteUser = async (userId) => {
+  try {
+    if (localStorage.getItem("token")) {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(`${BASE_URL}/user/${userId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Auth: token,
+        },
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    }
+  } catch (error) {
+    console.error("Error deleting user: ", error);
+    toast.error("An error occurred while deleting the user.");
+  }
+};
+
+
+   
 //  cart 
     const  getCart = async ()=>{
        try{
@@ -502,6 +548,7 @@ toast.success(response.data.message)
 ,
           loginAdmin,isAdmin,
           addProduct,updateProduct ,products
+          ,updateProfile,handleDeleteUser
         }}
       >
         {props.children}

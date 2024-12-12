@@ -1,8 +1,11 @@
 import { useContext, useEffect } from 'react'
 import AppContext from '../../context/AppContext'
+import { Link, useNavigate } from 'react-router-dom';
+
+
 const Profile = () => {
-    let  {user,userProfile} = useContext(AppContext);
-    
+    let  {user,userProfile,handleDeleteUser} = useContext(AppContext);
+    const navigate = useNavigate();
    useEffect(()=>{
     userProfile();
    },[])
@@ -28,6 +31,16 @@ const Profile = () => {
           <span className="font-bold text-gray-300">Created At:</span> {new Date(user.createdAt).toLocaleString()}
         </p>
       </div>
+      <Link to="/edituser">
+        <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+          Edit Profile
+        </button>
+      </Link>
+      <button onClick={()=>{handleDeleteUser(user._id) ;
+        navigate('/')
+      }} className="mt-4 bg-red-500 hover:bg-red-600 mx-2 text-white font-semibold py-2 px-4 rounded">
+          Delete Profile
+        </button>
     </div>
   </div>
   )

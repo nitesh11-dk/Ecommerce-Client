@@ -30,12 +30,7 @@ const location = useLocation();
     <div>
       <div className="navbar bg-base-200 sm:px-20 sticky top-0 z-50 shadow-md">
         <div className="navbar-start flex  gap-2">
-          <div>
-            {
-              isAdmin ? (<GrUserAdmin className='text-3xl ' />):(<FaUserAstronaut  className='text-3xl '/>)
-            }
-          </div>
-          <Link to="/" className="btn btn-ghost normal-case text-xl">E-comm</Link>
+          <Link to="/" className="btn btn-ghost normal-case text-xl">TechBazaar</Link>
         </div>
 
         <div className="navbar-center hidden lg:flex">
@@ -61,7 +56,11 @@ const location = useLocation();
           </span>
             <FaShoppingCart className="text-xl" />
           </Link>
-              <Link to="/profile" className="btn btn-outline">Profile</Link>
+              <Link to="/profile">
+            {
+              isAdmin ? (<GrUserAdmin className='text-3xl ' />):(<FaUserAstronaut  className='text-3xl '/>)
+            }
+          </Link>
               <button 
                 onClick={() => {
                   logoutUser();

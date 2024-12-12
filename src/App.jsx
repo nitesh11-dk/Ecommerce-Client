@@ -19,7 +19,7 @@ import AdminPanel from './Componenets/ADMIN/Admin';
 import AllUsers from './Componenets/ADMIN/Alluser';
 import Orders from './Componenets/ADMIN/Orders';
 import OrderDetailed from './Componenets/ADMIN/OrderDetailed';
-
+import EditUser from './Componenets/User/EditUser';
 const App = () => {
   const {isAdmin} = useContext(AppContext);
   
@@ -38,7 +38,7 @@ const App = () => {
          <Route path='/address' element={<Address/>}/>
          <Route path='/checkout' element={<Checkout/>}/>
          <Route path='/orderconfirmation' element={<OrderConformation/>}/>
-
+         <Route path='/edituser' element={<EditUser/>}/>
 
          {/* ? Admin  */}
             {isAdmin &&(
