@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 
 const Profile = () => {
-    let  {user,userProfile,handleDeleteUser} = useContext(AppContext);
+    let  {user,userProfile,handleDeleteUser ,logoutUser} = useContext(AppContext);
     const navigate = useNavigate();
    useEffect(()=>{
     userProfile();
@@ -37,7 +37,8 @@ const Profile = () => {
         </button>
       </Link>
       <button onClick={()=>{handleDeleteUser(user._id) ;
-        navigate('/')
+        logoutUser();
+        navigate('/');
       }} className="mt-4 bg-red-500 hover:bg-red-600 mx-2 text-white font-semibold py-2 px-4 rounded">
           Delete Profile
         </button>

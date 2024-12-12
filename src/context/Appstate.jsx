@@ -270,6 +270,44 @@ const [isAdmin, setIsAdmin] = useState(false);
 };
 
 
+//  ADMIN 
+
+const toggleAdminStatus = async (userId) => {
+  try {
+      const token = localStorage.getItem("token"); // Retrieve token from localStorage
+
+      if (!token) {
+          toast.error("Authentication token is missing.");
+          return false;
+      }
+
+      const response = await axios.put(
+          `${BASE_URL}/user/toggleuseradmin/${userId}`, 
+          {},
+          {
+              headers: {
+                  "Content-Type": "application/json",
+                  Auth: token, 
+              },
+              withCredentials: true,
+          }
+      );
+
+      if (response.data.success) {
+          toast.success(response.data.message);
+          return response.data.isAdmin; 
+      } else {
+          toast.error(response.data.message);
+          return false;
+      }
+  } catch (err) {
+      console.error("Error toggling admin status:", err.message);
+      toast.error("Failed to toggle admin status.");
+      return false;
+  }
+};
+
+
    
 //  cart 
     const  getCart = async ()=>{
@@ -548,7 +586,8 @@ toast.success(response.data.message)
 ,
           loginAdmin,isAdmin,
           addProduct,updateProduct ,products
-          ,updateProfile,handleDeleteUser
+          ,updateProfile,handleDeleteUser ,
+          toggleAdminStatus
         }}
       >
         {props.children}
