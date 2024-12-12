@@ -115,9 +115,10 @@ function AllUsers() {
                 <span className="font-semibold text-gray-300">Created At:</span>{" "}
                 {new Date(user.createdAt).toLocaleDateString()}
               </p>
-              <div className="flex gap-4">
-                {
+              {
                   currentUser && currentUser._id !== user._id && (
+              <div className="flex gap-4">
+               
                     <button
                   onClick={() => handleToggleAdmin(user._id)}
                   className={`px-4 py-2 rounded transition duration-300 ${
@@ -126,8 +127,7 @@ function AllUsers() {
                 >
                   {user.isAdmin ? "Revoke Admin" : "Make Admin"}
                 </button>
-                  )
-                }
+                
                 <button
                   onClick={() => handleDeleteUser(user._id)}
                   className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300"
@@ -135,6 +135,8 @@ function AllUsers() {
                   Delete User
                 </button>
               </div>
+              )
+            }
             </div>
           ))
         ) : (
