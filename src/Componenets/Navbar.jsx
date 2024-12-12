@@ -9,8 +9,7 @@ import { FaUserAstronaut } from "react-icons/fa";
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
-  const { setSearchFilter, isLoggedIn, logoutUser, setCategoryFilterState, clearFilters ,cart ,isAdmin } = useContext(AppContext);
+  const { setSearchFilter, isLoggedIn, logoutUser,cart ,isAdmin } = useContext(AppContext);
 
 
   let navigate = useNavigate();
@@ -20,10 +19,8 @@ const Navbar = () => {
     setSearchFilter(query); 
   };
 
-  const handleCategoryChange = (category) => {
-    setCategoryFilter(category.toLowerCase());
-    setCategoryFilterState(category.toLowerCase());
-  };
+  
+
 
 const location = useLocation();
   return (
@@ -85,57 +82,20 @@ const location = useLocation();
       {
          (location.pathname === '/') && (
 
-          <div className="bg-base400 flex items-center justify-center  p-4">
-          {
-            isAdmin &&   <Link to={'/addproduct'} className=' px-4 py-2  rounded-xl bg-base-300 mr-8'>Add Product</Link>
-          }
-        <div className="flex justify-between gap-10 items-center">
-          <div className="flex gap-4">
-  
-            <button 
-              onClick={() => handleCategoryChange('Mobile')}
-              className={`btn btn-outline ${categoryFilter === 'Mobile' ? 'bg-blue-500 text-white' : ''}`}
-            >
-              Mobile
-            </button>
-            <button 
-              onClick={() => handleCategoryChange('Laptop')}
-              className={`btn btn-outline ${categoryFilter === 'Laptop' ? 'bg-blue-500 text-white' : ''}`}
-            >
-              Laptop
-            </button>
-            <button 
-              onClick={() => handleCategoryChange('Tablet')}
-              className={`btn btn-outline ${categoryFilter === 'Tablet' ? 'bg-blue-500 text-white' : ''}`}
-            >
-              Tablet
-            </button>
-            <button 
-              onClick={() => handleCategoryChange('PC')}
-              className={`btn btn-outline ${categoryFilter === 'PC' ? 'bg-blue-500 text-white' : ''}`}
-            >
-              PC
-            </button>
-            <input 
-              type="text" 
-              value={categoryFilter} 
-              onChange={(e) => handleCategoryChange(e.target.value)}
-              placeholder="Custom Category" 
-              className="input input-bordered"
-            />
-          </div>
-          <button onClick={clearFilters} className="btn btn-outline">
-              Clear Filters
-            </button>
-
-            {
-            isAdmin &&   <Link to={'/adminpanel'} className=' px-4 py-2  rounded-xl bg-gray-500 mr-8'>ADMIN</Link>
-          }
-          <div>
-           
-          </div>
-        </div>
-      </div>
+          <div className="bg-base400 flex items-center justify-center p-4">
+    {isAdmin && (
+      <Link to={'/addproduct'} className="px-4 py-2 rounded-xl bg-base-300 mr-8">
+        Add Product
+      </Link>
+    )}
+    <div className="flex justify-between gap-10 items-center">
+      {isAdmin && (
+        <Link to={'/adminpanel'} className="px-4 py-2 rounded-xl bg-gray-500 mr-8">
+          ADMIN
+        </Link>
+      )}
+    </div>
+  </div>
       
          )  
       }

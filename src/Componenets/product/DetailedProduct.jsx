@@ -50,7 +50,6 @@ const formattedDate =  new Date(product.createdAt).toLocaleString();
   <div className="card-body w-2/3 pl-6">
     <h2 className="card-title text-4xl font-semibold text-gray-300">
       {product.name}
-      <div className="badge badge-secondary ml-3">NEW</div>
     </h2>
     <p className="text-lg mt-4 text-gray-400 leading-relaxed">
       {product.description}

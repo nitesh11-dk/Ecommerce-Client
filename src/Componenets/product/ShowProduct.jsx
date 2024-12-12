@@ -3,13 +3,17 @@ import AppContext from "../../context/AppContext";
 import Cards from './Cards';
 
 const ShowProduct = () => {
-  const { products  } = useContext(AppContext);
-
+  const { products ,searchFilter } = useContext(AppContext); 
   if (!products) {
     return <div>Loading...</div>;
   }
 
-  return <Cards products={products} />;
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchFilter.toLowerCase());
+    return matchesSearch ;
+  });
+
+  return <Cards products={filteredProducts} />;
 };
 
 export default ShowProduct;

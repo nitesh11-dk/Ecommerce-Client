@@ -12,27 +12,25 @@ const Cards = ({products}) => {
   return (
     <div  className='flex gap-10 flex-wrap  justify-center  px-20 w-[99%]'>
     {products.map((product) => (
-     <div key={product._id} className="card bg-base-100 p-2 h-fit w-92 shadow-xl">
+     <div key={product._id} className="relative card bg-base-100 p-2 h-[400px] w-72 shadow-xl">
        <Link to={`/product/${product._id}`}  >
       <figure>
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-48 object-cover rounded-lg"
+          className="w-full h-48 object-contain  rounded-3xl"
         />
       </figure>
-      <div className="card-body">
+      <div className="card-body ">
         <h2 className="card-title">
-          {product.name}
-          <div className="badge badge-secondary">NEW</div>
+          {product.name.split(" ").slice(0, 4).join(" ")}
         </h2>
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex justify-between items-center mt-1">
           <span className="text-lg font-semibold">₹{product.price.toFixed(2)}</span>
         </div>
-       
       </div>
     </Link>
-   <div className='gap-10 flex  justify-between px-8'>
+   <div className='gap-4 flex absolute bottom-2  justify-between px-2'>
    {
     isAdmin && (
        
