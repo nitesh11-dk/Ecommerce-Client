@@ -73,7 +73,7 @@ const Appstate = (props) => {
         setToken(token);
         setIsLoggedIn(true);
         setReload1(!reload1);
-
+        checkAdmin();
         // Save the token in localStorage
         localStorage.setItem("token", token);
         toast.success(response.data.message);
