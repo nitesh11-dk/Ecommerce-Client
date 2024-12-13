@@ -56,7 +56,7 @@ function Orders() {
                 <span className="font-semibold text-gray-300">Payment ID:</span> {order.paymentId}
               </p>
               <p className="text-lg text-gray-400 mb-4">
-                <span className="font-semibold text-gray-300">Total Amount:</span> ₹{order.amount / 100} (₹{order.amount})
+                <span className="font-semibold text-gray-300">Total Amount:</span>  (₹{order.amount})
               </p>
               <p className="text-lg text-gray-400 mb-2">
                 <span className="font-semibold text-gray-300">Order Date:</span> {new Date(order.orderDate).toLocaleDateString()}
