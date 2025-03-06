@@ -24,7 +24,7 @@ const location = useLocation();
     <div>
       <div className="navbar bg-base-200 sm:px-20 sticky top-0 z-50 shadow-md">
         <div className="navbar-start flex  gap-2">
-          <Link to="/" className="btn btn-ghost normal-case text-xl">TechBazaar</Link>
+          <Link to="/" className="btn btn-ghost normal-case text-xl">Electro-Mart</Link>
         </div>
 
         <div className="navbar-center hidden lg:flex">
