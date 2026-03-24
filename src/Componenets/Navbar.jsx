@@ -20,12 +20,10 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    navigate('/');
-    setTimeout(() => {
-      logoutUser();
-      toast.success('Logged out successfully');
-      window.scrollTo(0, 0);
-    }, 10);
+    logoutUser();
+    navigate('/', { replace: true });
+    toast.success('Logged out successfully');
+    window.scrollTo(0, 0);
   };
 
   return (
