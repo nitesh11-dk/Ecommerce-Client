@@ -41,6 +41,53 @@ const DetailedOrder = ({ order, statusControls }) => {
         </div>
       </div>
 
+ {/* Items Table Card */}
+        <div className="card-surface overflow-hidden p-0 shadow-sm border border-slate-200 rounded-2xl bg-white">
+          <div className="px-5 py-4 border-b border-slate-100 font-bold flex items-center gap-2.5 bg-slate-50 text-slate-800 text-sm">
+            <FaTag className="text-indigo-500" /> Order Registry
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50/30">
+                  <th className="px-5 py-3 text-[10px] font-black uppercase text-slate-400 tracking-wider">Product Description</th>
+                  <th className="px-5 py-3 text-[10px] font-black uppercase text-slate-400 tracking-wider text-right">Price</th>
+                  <th className="px-5 py-3 text-[10px] font-black uppercase text-slate-400 tracking-wider text-center">Quantity</th>
+                  <th className="px-5 py-3 text-[10px] font-black uppercase text-slate-400 tracking-wider text-right">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {order.orderItems.map((item, index) => (
+                  <tr key={index} className="hover:bg-slate-50/20 transition-colors">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-slate-100 rounded-lg p-1.5 flex items-center justify-center flex-shrink-0 ring-1 ring-slate-200">
+                          <img src={item.productId?.image} alt="" className="max-w-full max-h-full object-contain" />
+                        </div>
+                        <div>
+                           <span className="font-bold text-slate-900 block text-sm leading-tight">
+                             {item.productId?.name}
+                           </span>
+                           {item.selectedSize && <span className="inline-block mt-1 text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter">SIZE: {item.selectedSize}</span>}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 text-right text-slate-500 text-xs font-semibold">₹{Number(item.productId?.price || 0).toLocaleString('en-IN')}</td>
+                    <td className="px-5 py-4 text-center font-bold text-slate-700">{item.quantity}</td>
+                    <td className="px-5 py-4 text-right font-black text-slate-900 border-l border-transparent">₹{Number(item.totalPrice).toLocaleString('en-IN')}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot className="bg-slate-50/50">
+                <tr>
+                  <td colSpan="2" className="px-5 py-4 text-right font-bold text-slate-400 text-xs">Final Tally</td>
+                  <td className="px-5 py-4 text-center font-black text-slate-800">{order.orderItems.reduce((acc, item) => acc + item.quantity, 0)} Units</td>
+                  <td className="px-5 py-4 text-right font-black text-indigo-600 text-lg">₹{Number(order.amount).toLocaleString('en-IN')}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
       <div className="flex flex-col gap-6">
         {/* Unified Metadata Grid Card */}
         <div className="card-surface overflow-hidden p-0 shadow-sm border border-slate-200 rounded-2xl bg-white">
@@ -104,53 +151,7 @@ const DetailedOrder = ({ order, statusControls }) => {
           </div>
         </div>
 
-        {/* Items Table Card */}
-        <div className="card-surface overflow-hidden p-0 shadow-sm border border-slate-200 rounded-2xl bg-white">
-          <div className="px-5 py-4 border-b border-slate-100 font-bold flex items-center gap-2.5 bg-slate-50 text-slate-800 text-sm">
-            <FaTag className="text-indigo-500" /> Order Registry
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/30">
-                  <th className="px-5 py-3 text-[10px] font-black uppercase text-slate-400 tracking-wider">Product Description</th>
-                  <th className="px-5 py-3 text-[10px] font-black uppercase text-slate-400 tracking-wider text-right">Price</th>
-                  <th className="px-5 py-3 text-[10px] font-black uppercase text-slate-400 tracking-wider text-center">Quantity</th>
-                  <th className="px-5 py-3 text-[10px] font-black uppercase text-slate-400 tracking-wider text-right">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {order.orderItems.map((item, index) => (
-                  <tr key={index} className="hover:bg-slate-50/20 transition-colors">
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-slate-100 rounded-lg p-1.5 flex items-center justify-center flex-shrink-0 ring-1 ring-slate-200">
-                          <img src={item.productId?.image} alt="" className="max-w-full max-h-full object-contain" />
-                        </div>
-                        <div>
-                           <span className="font-bold text-slate-900 block text-sm leading-tight">
-                             {item.productId?.name}
-                           </span>
-                           {item.selectedSize && <span className="inline-block mt-1 text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter">SIZE: {item.selectedSize}</span>}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4 text-right text-slate-500 text-xs font-semibold">₹{Number(item.productId?.price || 0).toLocaleString('en-IN')}</td>
-                    <td className="px-5 py-4 text-center font-bold text-slate-700">{item.quantity}</td>
-                    <td className="px-5 py-4 text-right font-black text-slate-900 border-l border-transparent">₹{Number(item.totalPrice).toLocaleString('en-IN')}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot className="bg-slate-50/50">
-                <tr>
-                  <td colSpan="2" className="px-5 py-4 text-right font-bold text-slate-400 text-xs">Final Tally</td>
-                  <td className="px-5 py-4 text-center font-black text-slate-800">{order.orderItems.reduce((acc, item) => acc + item.quantity, 0)} Units</td>
-                  <td className="px-5 py-4 text-right font-black text-indigo-600 text-lg">₹{Number(order.amount).toLocaleString('en-IN')}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </div>
+       
       </div>
     </div>
   );

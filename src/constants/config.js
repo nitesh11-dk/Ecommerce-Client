@@ -1,6 +1,6 @@
-export const BASE_URL = "http://localhost:3000/api";
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 // export const BASE_URL = "https://e-commerce-3-l187.onrender.com/api";
-export const razorpayKey = "rzp_test_SV0juybEtjeSGI";
+export const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
 export const SHOE_CATEGORIES = ["sneakers", "formal", "sandals", "sports", "boots", "casual"];
 export const GENDERS = ["men", "women", "unisex", "kids"];
