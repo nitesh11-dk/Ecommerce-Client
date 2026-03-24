@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import AppContext from '../context/AppContext.jsx';
 import { Link } from 'react-router-dom';
 import { FaCheckCircle, FaHome, FaBox } from 'react-icons/fa';
+import DetailedOrder from './ADMIN/DetailedOrder.jsx';
 
 const OrderConformation = () => {
   const { getOrders, userOrder } = useContext(AppContext);
@@ -44,7 +45,23 @@ const OrderConformation = () => {
           </div>
         </div>
 
-       
+        {/* Order Details */}
+        {order ? (
+          <div className="fade-up bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-2.5 bg-slate-50/50">
+              <FaBox className="text-indigo-600" />
+              <h2 className="font-bold text-lg text-slate-800">Order Summary</h2>
+            </div>
+            <div className="p-6">
+              <DetailedOrder order={order} />
+            </div>
+          </div>
+        ) : (
+          <div className="text-center p-10">
+            <div className="animate-pulse bg-slate-200 h-64 rounded-2xl w-full" />
+            <p className="mt-4 text-slate-400 font-medium">Loading your order details...</p>
+          </div>
+        )}
       </div>
     </div>
   );

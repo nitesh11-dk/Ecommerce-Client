@@ -55,7 +55,10 @@ const OrderDetailed = () => {
           >
              <span className="text-lg">←</span> Back to Order List
           </button>
-          
+          <div className="sm:text-right">
+             <h1 className="text-2xl font-black text-slate-900 leading-tight">Order Management</h1>
+             <p className="text-sm text-slate-500 font-medium">Control fulfillment and manage refund lifecycles</p>
+          </div>
         </div>
 
         {/* Integration of DetailedOrder and Status Management */}
@@ -84,7 +87,7 @@ const OrderDetailed = () => {
 
                {order.orderStatus === 'Cancelled' && (
                  <div className="flex flex-col gap-1.5 pt-1.5">
-                   <label className="text-[10px] font-black text-red-400 uppercase tracking-widest">Refund Management</label>
+                   <label className="text-[10px] font-black text-red-500 uppercase tracking-widest">Refund Management</label>
                    <select
                      value={order.refundStatus || 'Pending'}
                      disabled={order.refundStatus === 'Refund Successful'}
