@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from 'react';
 import AppContext from '../context/AppContext.jsx';
 import { Link } from 'react-router-dom';
 import { FaCheckCircle, FaHome, FaBox } from 'react-icons/fa';
-import DetailedOrder from './ADMIN/DetailedOrder.jsx';
 
 const OrderConformation = () => {
   const { getOrders, userOrder } = useContext(AppContext);
@@ -45,27 +44,7 @@ const OrderConformation = () => {
           </div>
         </div>
 
-        {/* Order Details */}
-        {order ? (
-          <div className="fade-up" style={{
-            background: 'var(--surface)', borderRadius: 'var(--radius-xl)',
-            border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)',
-            overflow: 'hidden',
-          }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 10, background: '#fafafa' }}>
-              <FaBox style={{ color: 'var(--primary)' }} />
-              <h2 style={{ fontWeight: 700, fontSize: 18, margin: 0 }}>Order Summary</h2>
-            </div>
-            <div style={{ padding: 24 }}>
-              <DetailedOrder order={order} />
-            </div>
-          </div>
-        ) : (
-          <div style={{ textAlign: 'center', padding: 40 }}>
-            <div className="skeleton" style={{ height: 200, borderRadius: 'var(--radius-lg)', width: '100%' }} />
-            <p style={{ marginTop: 16, color: 'var(--text-muted)' }}>Loading your order details...</p>
-          </div>
-        )}
+       
       </div>
     </div>
   );

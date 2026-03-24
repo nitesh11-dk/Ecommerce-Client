@@ -41,70 +41,7 @@ const DetailedOrder = ({ order, statusControls }) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-6">
-        {/* Unified Metadata Grid Card */}
-        <div className="card-surface overflow-hidden p-0 border border-slate-200">
-          <div className="px-5 py-4 border-b border-slate-100 font-extrabold bg-slate-50 text-slate-800 text-xs uppercase tracking-widest">
-             {statusControls ? 'Order Summary & Fulfillment' : 'Order Summary'}
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 border-b border-slate-100">
-            {/* Customer Column */}
-            <div className="p-5 border-r border-slate-100">
-              <div className="mb-4">
-                 <div className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 flex items-center gap-1.5">
-                    <FaUser className="text-indigo-400" /> Customer
-                 </div>
-                 <div className="text-sm font-bold text-slate-900">{order.userShippingAddress?.name || 'Guest User'}</div>
-                 <div className="text-[10px] text-slate-500 font-mono tracking-tight">{order.userId}</div>
-              </div>
-              <div className="pt-4 border-t border-slate-50">
-                 <div className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 flex items-center gap-1.5">
-                    <FaCreditCard className="text-indigo-400" /> Payment Details
-                 </div>
-                 <div className="text-xs font-bold text-green-600">ID: {order.paymentId}</div>
-                 <div className="text-[11px] text-slate-500">Method: Online Transaction</div>
-              </div>
-            </div>
-
-            {/* Status & Date Column */}
-            <div className="p-5">
-              <div className="mb-4">
-                 <div className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 flex items-center gap-1.5">
-                    <FaCalendarAlt className="text-indigo-400" /> Placement Date
-                 </div>
-                 <div className="text-sm font-bold text-slate-900">{new Date(order.orderDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
-                 <div className="text-[11px] text-slate-500 font-medium">{new Date(order.orderDate).toLocaleTimeString('en-IN')}</div>
-              </div>
-
-              {statusControls && (
-                <div className="pt-4 border-t border-slate-50">
-                   {statusControls}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Full Width Shipping Section */}
-          <div className="p-5 bg-slate-50/50">
-             <div className="text-[10px] font-bold text-slate-400 uppercase mb-2 flex items-center gap-1.5">
-                <FaMapMarkerAlt className="text-indigo-400" /> Shipping Destination
-             </div>
-             <div className="flex justify-between items-end flex-wrap gap-4">
-                <div>
-                  <div className="text-sm font-bold text-slate-900 leading-snug">{order.userShippingAddress?.address}</div>
-                  <div className="text-xs text-slate-500 font-medium mt-0.5">
-                    {order.userShippingAddress?.city}, {order.userShippingAddress?.state}, {order.userShippingAddress?.pincode}
-                  </div>
-                </div>
-                <div className="bg-white px-4 py-2 rounded-lg border border-slate-200 font-bold text-indigo-600 text-sm shadow-sm">
-                   📞 {order.userShippingAddress?.phoneNumber}
-                </div>
-             </div>
-          </div>
-        </div>
-
-        {/* Items Table Card */}
+  {/* Items Table Card */}
         <div className="card-surface overflow-hidden p-0 border border-slate-200">
           <div className="px-5 py-4 border-b border-slate-100 font-bold flex items-center gap-2.5 bg-slate-50 text-slate-800 text-sm">
             <FaTag className="text-indigo-500" /> Order Registry
@@ -151,6 +88,72 @@ const DetailedOrder = ({ order, statusControls }) => {
             </table>
           </div>
         </div>
+        
+      <div className="flex flex-col gap-6">
+        {/* Unified Metadata Grid Card */}
+        <div className="card-surface overflow-hidden p-0 border border-slate-200">
+          <div className="px-5 py-4 border-b border-slate-100 font-extrabold bg-slate-50 text-slate-800 text-xs uppercase tracking-widest">
+             {statusControls ? 'Order Summary & Fulfillment' : 'Order Summary'}
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 border-b border-slate-100">
+            {/* Customer Column */}
+            <div className="p-5 border-r border-slate-100">
+              <div className="mb-4">
+                 <div className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 flex items-center gap-1.5">
+                    <FaUser className="text-indigo-400" /> Customer
+                 </div>
+                 <div className="text-sm font-bold text-slate-900">{order.userShippingAddress?.name || 'Guest User'}</div>
+                 <div className="text-[10px] text-slate-500 font-mono tracking-tight">{order.userId}</div>
+              </div>
+              <div className="pt-4 border-t border-slate-50">
+                 <div className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 flex items-center gap-1.5">
+                    <FaCreditCard className="text-indigo-400" /> Payment Details
+                 </div>
+                 <div className="text-xs font-bold text-green-600">ID: {order.paymentId}</div>
+                 <div className="text-[11px] text-slate-500">Method: Online Transaction</div>
+              </div>
+            </div>
+
+            {/* Status & Date Column */}
+            <div className="p-5">
+              <div className="mb-4">
+                 <div className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 flex items-center gap-1.5">
+                    <FaCalendarAlt className="text-indigo-400" /> Placement Date
+                 </div>
+                 <div className="text-sm font-bold text-slate-900">{new Date(order.orderDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+                 <div className="text-[11px] text-slate-500 font-medium">{new Date(order.orderDate).toLocaleTimeString('en-IN')}</div>
+              </div>
+
+              {statusControls && (
+                <div className="pt-4 border-t border-slate-50">
+                   {statusControls}
+                </div>
+              )}
+            </div>
+          </div>
+
+
+          {/* Full Width Shipping Section */}
+          <div className="p-5 bg-slate-50/50">
+             <div className="text-[10px] font-bold text-slate-400 uppercase mb-2 flex items-center gap-1.5">
+                <FaMapMarkerAlt className="text-indigo-400" /> Shipping Destination
+             </div>
+             <div className="flex justify-between items-end flex-wrap gap-4">
+                <div>
+                  <div className="text-sm font-bold text-slate-900 leading-snug">{order.userShippingAddress?.address}</div>
+                  <div className="text-xs text-slate-500 font-medium mt-0.5">
+                    {order.userShippingAddress?.city}, {order.userShippingAddress?.state}, {order.userShippingAddress?.pincode}
+                  </div>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg border border-slate-200 font-bold text-indigo-600 text-sm shadow-sm">
+                   📞 {order.userShippingAddress?.phoneNumber}
+                </div>
+             </div>
+          </div>
+        </div>
+
+      
       </div>
     </div>
   );

@@ -55,10 +55,7 @@ const OrderDetailed = () => {
           >
              <span className="text-lg">←</span> Back to Order List
           </button>
-          <div className="sm:text-right">
-             <h1 className="text-2xl font-black text-slate-900 leading-tight">Order Management</h1>
-             <p className="text-sm text-slate-500 font-medium">Control fulfillment and manage refund lifecycles</p>
-          </div>
+          
         </div>
 
         {/* Integration of DetailedOrder and Status Management */}
