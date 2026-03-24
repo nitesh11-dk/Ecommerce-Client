@@ -21,8 +21,9 @@ const Profile = () => {
     );
   }
 
-  const initials = user.name?.slice(0, 2).toUpperCase();
-  const joined = new Date(user.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+   const initials = user.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+   const joined = new Date(user.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+   const displayName = user.name?.split(' ').map(n => n.charAt(0).toUpperCase() + n.slice(1)).join(' ');
 
   return (
     <div style={{ minHeight: 'calc(100vh - 64px)', background: 'var(--bg)', padding: '40px 24px' }}>
@@ -52,25 +53,26 @@ const Profile = () => {
               {initials}
             </div>
 
-            <div style={{ marginTop: 14, textAlign: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                <h1 style={{ fontWeight: 800, fontSize: 22, color: 'var(--text-primary)' }}>{user.name}</h1>
-                {isAdmin && (
-                  <span className="badge badge-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                    <FaShieldAlt style={{ fontSize: 9 }} /> Admin
-                  </span>
-                )}
-              </div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginTop: 4 }}>{user.email}</p>
-            </div>
+             <div style={{ marginTop: 14, textAlign: 'center' }}>
+               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                 <h1 style={{ fontWeight: 800, fontSize: 24, color: 'var(--text-primary)', textTransform: 'capitalize' }}>{displayName}</h1>
+                 {isAdmin && (
+                   <span className="badge badge-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                     <FaShieldAlt style={{ fontSize: 9 }} /> Admin
+                   </span>
+                 )}
+               </div>
+               <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginTop: 4, opacity: 0.8 }}>{user.email}</p>
+             </div>
 
             {/* Info rows */}
             <div style={{ width: '100%', marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {[
-                { icon: <FaIdCard />, label: 'User ID', value: user._id },
-                { icon: <FaEnvelope />, label: 'Email', value: user.email },
-                { icon: <FaCalendar />, label: 'Member since', value: joined },
-              ].map(({ icon, label, value }) => (
+               {[
+                 { icon: <FaUser />, label: 'Profile Name', value: displayName },
+                 { icon: <FaEnvelope />, label: 'Email Address', value: user.email },
+                 { icon: <FaCalendar />, label: 'Member Since', value: joined },
+                 { icon: <FaIdCard />, label: 'Unique ID', value: user._id },
+               ].map(({ icon, label, value }) => (
                 <div key={label} style={{
                   display: 'flex', alignItems: 'flex-start', gap: 12,
                   padding: '12px 14px', background: 'var(--surface-2)',

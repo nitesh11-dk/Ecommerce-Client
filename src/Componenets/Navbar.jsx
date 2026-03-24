@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { setSearchFilter, isLoggedIn, logoutUser, cart, isAdmin } = useContext(AppContext);
+  const { setSearchFilter, isLoggedIn, logoutUser, cart, isAdmin, user } = useContext(AppContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -103,11 +103,14 @@ const Navbar = () => {
                         <FaBoxOpen style={{ fontSize: 17 }} />
                       </button>
                     </Link>
-                    <Link to="/profile" style={{ textDecoration: 'none' }} title="Profile">
-                      <button className="btn-icon" style={{ width: 40, height: 40 }}>
-                        <FaUserCircle style={{ fontSize: 18 }} />
-                      </button>
-                    </Link>
+                     <Link to="/profile" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }} title="Profile">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 12px', borderRadius: 'var(--radius-lg)', background: 'var(--bg)', border: '1px solid var(--border)', transition: 'all 0.2s' }} className="nav-profile-btn">
+                          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'capitalize' }}>
+                            {user?.name?.split(' ')[0]}
+                          </span>
+                          <FaUserCircle style={{ fontSize: 18, color: 'var(--primary)' }} />
+                        </div>
+                     </Link>
 
                     <button className="btn-outline" onClick={handleLogout} style={{ padding: '7px 16px', fontSize: 13 }}>
                       Logout
