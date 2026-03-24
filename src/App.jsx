@@ -12,11 +12,13 @@ import ShoppingCart from "./Componenets/Cart";
 import Address from "./Componenets/Address";
 import Checkout from "./Componenets/Checkout";
 import OrderConformation from "./Componenets/OrderConformation";
+import UserOrders from "./Componenets/User/UserOrders";
 import ProductForm from "./Componenets/product/ProductForm";
 import AppContext from "./context/AppContext";
 import EditProduct from "./Componenets/product/EditProject";
 import AdminPanel from "./Componenets/ADMIN/Admin";
 import AllUsers from "./Componenets/ADMIN/Alluser";
+import AdminProducts from "./Componenets/ADMIN/AdminProducts";
 import Orders from "./Componenets/ADMIN/Orders";
 import OrderDetailed from "./Componenets/ADMIN/OrderDetailed";
 import EditUser from "./Componenets/User/EditUser";
@@ -25,7 +27,15 @@ const App = () => {
 
   return (
     <Router>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="light"
+      />
       <Navbar />
       <Routes>
         <Route path="/" element={<ShowProduct />} />
@@ -37,20 +47,19 @@ const App = () => {
         <Route path="/address" element={<Address />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/orderconfirmation" element={<OrderConformation />} />
+        <Route path="/orders" element={<UserOrders />} />
         <Route path="/edituser" element={<EditUser />} />
 
         {/* ? Admin  */}
         {isAdmin && (
           <>
-            <Route path="/addproduct" element={<ProductForm />} />
             <Route path="/update/:id" element={<EditProduct />} />
             <Route path="/adminpanel" element={<AdminPanel />}>
               <Route path="/adminpanel/users" element={<AllUsers />} />
               <Route path="/adminpanel/orders" element={<Orders />} />
-              <Route
-                path="/adminpanel/orders/:id"
-                element={<OrderDetailed />}
-              />
+              <Route path="/adminpanel/orders/:id" element={<OrderDetailed />} />
+              <Route path="/adminpanel/products" element={<AdminProducts />} />
+              <Route path="/adminpanel/addproduct" element={<ProductForm />} />
             </Route>
           </>
         )}

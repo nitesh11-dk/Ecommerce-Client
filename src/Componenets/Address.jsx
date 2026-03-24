@@ -1,126 +1,102 @@
 import React, { useContext, useState } from 'react';
-import AppContext from "../context/AppContext";
+import AppContext from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
+import { FaMapMarkerAlt, FaPhone, FaCity, FaGlobe, FaArrowRight } from 'react-icons/fa';
+
+const FIELDS = [
+  { name: 'address',     label: 'Street Address', icon: <FaMapMarkerAlt />, placeholder: '123 Main Street, Apt 4B', type: 'text' },
+  { name: 'city',        label: 'City',            icon: <FaCity />,         placeholder: 'Mumbai',            type: 'text' },
+  { name: 'state',       label: 'State',           icon: <FaGlobe />,        placeholder: 'Maharashtra',       type: 'text' },
+  { name: 'country',     label: 'Country',         icon: <FaGlobe />,        placeholder: 'India',             type: 'text' },
+  { name: 'phoneNumber', label: 'Phone Number',    icon: <FaPhone />,        placeholder: '+91 9876543210',    type: 'tel' },
+];
 
 const Address = () => {
-  const [address, setAddress] = useState({
-    userId: '',
-    address: '',
-    city: '',
-    state: '',
-    country: '',
-    phoneNumber: '',
-  });
-  const { userAddress ,addAddress } = useContext(AppContext);
-const navigate = useNavigate()
+  const [form, setForm] = useState({ address: '', city: '', state: '', country: '', phoneNumber: '' });
+  const [loading, setLoading] = useState(false);
+  const { userAddress, addAddress } = useContext(AppContext);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAddress((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    addAddress(address);
-    navigate('/checkout');
+    setLoading(true);
+    try {
+      await addAddress(form);
+      navigate('/checkout');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="h-screen bg-gray-900 flex items-center justify-center">
-      <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Address Information</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="address" className="block text-sm font-medium mb-1">
-              Address
-            </label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={address.address}
-              onChange={handleChange}
-              placeholder="Enter your address"
-              className="w-full bg-gray-700 text-white p-2 rounded focus:outline-none focus:ring focus:ring-blue-500"
-              required
-            />
+    <div style={{ minHeight: 'calc(100vh - 64px)', background: 'var(--bg)', padding: '40px 24px', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 28 }}>
+      {/* Saved Address Card */}
+      {userAddress && (
+        <div className="fade-up" style={{
+          background: 'var(--surface)', borderRadius: 'var(--radius-xl)',
+          border: '1px solid var(--border)', boxShadow: 'var(--shadow-md)',
+          padding: 28, width: 280, flexShrink: 0,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <FaMapMarkerAlt style={{ color: 'var(--primary)' }} />
+            <h3 style={{ fontWeight: 700, fontSize: 16 }}>Saved Address</h3>
           </div>
-          <div>
-            <label htmlFor="city" className="block text-sm font-medium mb-1">
-              City
-            </label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              value={address.city}
-              onChange={handleChange}
-              placeholder="Enter your city"
-              className="w-full bg-gray-700 text-white p-2 rounded focus:outline-none focus:ring focus:ring-blue-500"
-              required
-            />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 14, color: 'var(--text-secondary)' }}>
+            <p>{userAddress.address}</p>
+            <p>{userAddress.city}, {userAddress.state}</p>
+            <p>{userAddress.country}</p>
+            <p style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <FaPhone style={{ fontSize: 11, color: 'var(--primary)' }} /> {userAddress.phoneNumber}
+            </p>
           </div>
-          <div>
-            <label htmlFor="state" className="block text-sm font-medium mb-1">
-              State
-            </label>
-            <input
-              type="text"
-              id="state"
-              name="state"
-              value={address.state}
-              onChange={handleChange}
-              placeholder="Enter your state"
-              className="w-full bg-gray-700 text-white p-2 rounded focus:outline-none focus:ring focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="country" className="block text-sm font-medium mb-1">
-              Country
-            </label>
-            <input
-              type="text"
-              id="country"
-              name="country"
-              value={address.country}
-              onChange={handleChange}
-              placeholder="Enter your country"
-              className="w-full bg-gray-700 text-white p-2 rounded focus:outline-none focus:ring focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="phoneNumber"  className="block text-sm font-medium mb-1">
-              Phone Number
-            </label>
-            <input
-              type="number"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={address.phoneNumber}
-              onChange={handleChange}
-              placeholder="Enter your phone number"
-              className="w-full bg-gray-700 text-white p-2 rounded focus:outline-none focus:ring focus:ring-blue-500"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded focus:outline-none focus:ring focus:ring-blue-300"
-          >
-            Save Address
+          <button className="btn-primary" style={{ width: '100%', marginTop: 20, padding: '10px' }}
+            onClick={() => navigate('/checkout')}>
+            Use This Address <FaArrowRight />
+          </button>
+        </div>
+      )}
+
+      {/* New Address Form */}
+      <div className="fade-up" style={{
+        background: 'var(--surface)', borderRadius: 'var(--radius-xl)',
+        border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)',
+        padding: '36px 40px', width: '100%', maxWidth: 460,
+      }}>
+        <div style={{ marginBottom: 28 }}>
+          <h2 style={{ fontWeight: 800, fontSize: 22, marginBottom: 4 }}>
+            {userAddress ? 'Add New Address' : 'Delivery Address'}
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+            Where should we deliver your order?
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {FIELDS.map(({ name, label, icon, placeholder, type }) => (
+            <div key={name}>
+              <label className="form-label" htmlFor={name}>{label}</label>
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 13 }}>
+                  {icon}
+                </span>
+                <input className="form-input" id={name} name={name} type={type}
+                  value={form[name]} onChange={handleChange}
+                  placeholder={placeholder}
+                  style={{ paddingLeft: 38 }}
+                  required />
+              </div>
+            </div>
+          ))}
+          <button className="btn-primary" type="submit" disabled={loading}
+            style={{ width: '100%', padding: '12px', fontSize: 15, marginTop: 4, opacity: loading ? 0.7 : 1 }}>
+            {loading ? 'Saving…' : 'Save & Continue'} {!loading && <FaArrowRight />}
           </button>
         </form>
-      {
-        userAddress && (
-          <h2 className='text-center'>
-          <button className="p-3 bg-yellow-200 my-3  text-black rounded-xl hover:bg-yellow-300" onClick={() => navigate('/checkout')}>Use Old Address </button>
-          </h2>
-        )
-      }
       </div>
     </div>
   );
 };
+
 export default Address;

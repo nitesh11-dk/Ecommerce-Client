@@ -3,147 +3,113 @@ import axios from 'axios';
 import { BASE_URL } from '../../constants/config';
 import AppContext from '../../context/AppContext';
 import { toast } from 'react-toastify';
+import { FaShieldAlt, FaTrash, FaUser } from 'react-icons/fa';
 
 function AllUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { toggleAdminStatus, user } = useContext(AppContext); // Get currentUser from context
-  let currentUser = user;
-  const [reload, setReload] = useState(false);
+  const { toggleAdminStatus, user: currentUser } = useContext(AppContext);
 
   const fetchAllUsers = async () => {
     try {
-      if (localStorage.getItem("token")) {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`${BASE_URL}/user/all`, {
-          headers: {
-            "Content-Type": "application/json",
-            Auth: token,
-          },
-          withCredentials: true,
-        });
-        setUsers(response.data.users);
-      }
-    } catch (error) {
-      console.error("Error fetching users: ", error);
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const res = await axios.get(`${BASE_URL}/user/all`, { headers: { Auth: token }, withCredentials: true });
+      setUsers(res.data.users);
+    } catch (e) {
+      toast.error('Failed to fetch users');
     } finally {
       setLoading(false);
     }
   };
 
   const handleToggleAdmin = async (userId) => {
-    try {
-      const newStatus = await toggleAdminStatus(userId);
-      if (newStatus !== false) {
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user._id === userId ? { ...user, isAdmin: newStatus } : user
-          )
-        );
-      }
-      setReload(!reload);
-    } catch (error) {
-      console.error("Error toggling admin status:", error);
-      toast.error("Failed to toggle admin status.");
+    const newStatus = await toggleAdminStatus(userId);
+    if (newStatus !== false) {
+      setUsers(prev => prev.map(u => u._id === userId ? { ...u, isAdmin: newStatus } : u));
     }
   };
 
-  const handleDeleteUser = async (userId) => {
+  const handleDelete = async (userId) => {
+    if (!confirm('Delete this user permanently?')) return;
     try {
-      if (localStorage.getItem("token")) {
-        const token = localStorage.getItem("token");
-        const response = await axios.delete(`${BASE_URL}/user/${userId}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Auth: token,
-          },
-          withCredentials: true,
-        });
-
-        if (response.data.success) {
-          toast.success(response.data.message);
-          setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
-        } else {
-          toast.error(response.data.message);
-        }
+      const token = localStorage.getItem('token');
+      const res = await axios.delete(`${BASE_URL}/user/${userId}`, { headers: { Auth: token }, withCredentials: true });
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setUsers(prev => prev.filter(u => u._id !== userId));
       }
-    } catch (error) {
-      console.error("Error deleting user: ", error);
-      toast.error("An error occurred while deleting the user.");
-    }
+    } catch { toast.error('Delete failed'); }
   };
 
-  useEffect(() => {
-    fetchAllUsers();
-  }, [reload]);
+  useEffect(() => { fetchAllUsers(); }, []);
 
-  if (loading) {
-    return <div className="text-white bg-gray-900 min-h-screen flex justify-center items-center">Loading...</div>;
-  }
+  if (loading) return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+      {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 160, borderRadius: 'var(--radius-lg)' }} />)}
+    </div>
+  );
 
   return (
-    <div className="bg-gray-900 text-white min-h-screen p-6">
-      <h1 className="text-4xl font-extrabold mb-8 text-gray-200">All Users</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {users.length > 0 ? (
-          users.map((user) => (
-            <div
-              key={user._id}
-              className="bg-gray-800 rounded-lg shadow-lg p-6 py-8 border border-gray-700 relative"
-            >
-              {user.isAdmin && (
-                <div className="absolute  top-1 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
-                  Admin
+    <div>
+      <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <h1 className="section-title">All Users</h1>
+          <p className="section-subtitle">{users.length} registered users</p>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+        {users.filter(u => u._id !== currentUser?._id).map((u) => {
+          const isCurrentUser = currentUser?._id === u._id;
+          return (
+            <div key={u._id} className="card-surface fade-up" style={{
+              padding: '20px', position: 'relative',
+              borderLeft: isCurrentUser ? '3px solid var(--primary)' : '1px solid var(--border)',
+            }}>
+              {/* Badges */}
+              <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 6 }}>
+                {u.isAdmin && <span className="badge badge-primary"><FaShieldAlt style={{ fontSize: 9 }} /> Admin</span>}
+                {isCurrentUser && <span className="badge badge-success">You</span>}
+              </div>
+
+              {/* Avatar & info */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: '50%',
+                  background: 'linear-gradient(135deg, var(--primary), #7c3aed)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0,
+                }}>
+                  {u.name?.slice(0, 2).toUpperCase()}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.name}</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email}</p>
+                </div>
+              </div>
+
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14 }}>
+                Joined {new Date(u.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
+              </div>
+
+              {!isCurrentUser && (
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    onClick={() => handleToggleAdmin(u._id)}
+                    className={u.isAdmin ? 'btn-outline' : 'btn-primary'}
+                    style={{ flex: 1, fontSize: 12, padding: '6px 8px' }}>
+                    {u.isAdmin ? 'Revoke Admin' : 'Make Admin'}
+                  </button>
+                  <button className="btn-icon" onClick={() => handleDelete(u._id)}
+                    style={{ color: 'var(--danger)', borderColor: '#fecaca' }} title="Delete">
+                    <FaTrash style={{ fontSize: 13 }} />
+                  </button>
                 </div>
               )}
-              {currentUser && currentUser._id === user._id && (
-                <span className="absolute rounded-full top-1 left-1 bg-green-500 text-white text-xl font-semibold   h-6 w-6 flex items-center justify-center ">
-                  U 
-                </span>
-              )}
-              <h2 className="text-2xl font-bold mb-4 text-gray-100">{user.name}</h2>
-              <p className="text-lg text-gray-400 mb-2">
-                <span className="font-semibold text-gray-300">Email:</span> {user.email}
-              </p>
-              <p className="text-lg text-gray-400 mb-2">
-                <span className="font-semibold text-gray-300">Role:</span> {user.role}
-              </p>
-              <p className="text-lg text-gray-400 mb-2">
-                <span className="font-semibold text-gray-300">Is Admin:</span> {user.isAdmin ? "Yes" : "No"}
-              </p>
-              <p className="text-lg text-gray-400 mb-4">
-                <span className="font-semibold text-gray-300">Created At:</span>{" "}
-                {new Date(user.createdAt).toLocaleDateString()}
-              </p>
-              {
-                  currentUser && currentUser._id !== user._id && (
-              <div className="flex gap-4">
-               
-                    <button
-                  onClick={() => handleToggleAdmin(user._id)}
-                  className={`px-4 py-2 rounded transition duration-300 ${
-                    user.isAdmin ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"
-                  } text-white`}
-                >
-                  {user.isAdmin ? "Revoke Admin" : "Make Admin"}
-                </button>
-                
-                <button
-                  onClick={() => handleDeleteUser(user._id)}
-                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300"
-                >
-                  Delete User
-                </button>
-              </div>
-              )
-            }
             </div>
-          ))
-        ) : (
-          <div className="col-span-full text-center text-lg text-gray-400">
-            No users found.
-          </div>
-        )}
+          );
+        })}
       </div>
     </div>
   );

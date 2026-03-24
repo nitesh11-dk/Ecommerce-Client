@@ -1,134 +1,117 @@
-import React, { useContext ,useEffect,useState } from "react";
-import AppContext from "../context/AppContext";
-import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useContext } from 'react';
+import AppContext from '../context/AppContext';
+import { FaPlus, FaMinus, FaTrash, FaShoppingBag, FaArrowRight } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
 
-
-
-const ShoppingCart = () => {
-  let { cart , addToCart ,isLoggedIn , decreaseQuantity ,removeItem,clearCart} = useContext(AppContext);
-
+const Cart = () => {
+  const { cart, decreaseQuantity, addToCart, removeItem } = useContext(AppContext);
   const navigate = useNavigate();
 
-  
-  if (!cart) {
+  if (!cart || cart.items.length === 0) {
     return (
-      <div className="text-center text-white mt-10">
-        <h1 className="text-3xl">Cart is empty</h1>
+      <div className="fade-up" style={{ minHeight: 'calc(100vh - 64px)', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, paddingBottom: 100 }}>
+        <div style={{ textAlign: 'center', maxWidth: 400 }}>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>🛒</div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>Your cart is empty</h1>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: 28 }}>Looks like you haven't added anything to your cart yet.</p>
+          <Link to="/" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-flex', padding: '14px 32px', fontSize: 16, width: '100%' }}>
+            Start Shopping
+          </Link>
+        </div>
       </div>
     );
   }
 
-  if(cart.items.length === 0){
-    return (
-      <div className="text-center text-white mt-10">
-        <h1 className="text-3xl">No items in the card </h1>
-      <Link to="/" className="btn text-xl btn-warning mt-4">Continue Shopping ...</Link>
-      </div>
-    )
-  }
-
+  const totalQty = cart.items.reduce((acc, item) => acc + item.quantity, 0);
+  const totalPrice = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
 
   return (
-    <div className="container mx-auto p-6 relative w-1/2  text-white ">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold">Shopping Cart</h1>
-        <p className="text-lg mt-4">
-          Total Items: <span className="font-semibold">{cart.items.length}</span>
-        </p>
-        <p className="text-lg">
-          Total Price:{" "}
-          <span className="font-semibold text-green-400">
-            ${cart.items.reduce((acc, item) => acc + item.totalPrice, 0).toFixed(2)}
-          </span>
-        </p>
-      </div>
+    <div className="fade-up" style={{ minHeight: 'calc(100vh - 64px)', background: 'var(--bg)', padding: '40px 24px' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <h1 style={{ fontWeight: 800, fontSize: 28, marginBottom: 28, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <FaShoppingBag style={{ color: 'var(--primary)' }} /> Shopping Cart
+        </h1>
 
-      {/* Cart Items */}
-      <div className="grid grid-cols-1 gap-8">
-        {cart.items.map((item) => (
-          <div
-            key={item._id}
-            className="flex flex-col md:flex-row items-center justify-between p-6 bg-gray-800 rounded-lg shadow-lg"
-          >
-            {/* Product Info */}
-            <Link to={`/product/${item.productId._id}`} className="flex items-center">
-              <img
-                src={item.productId.image}
-                alt={item.productId.name}
-                className="w-24 h-24 object-cover rounded-lg"
-              />
-              <div className="ml-6">
-                <h2 className="text-xl font-semibold">{item.productId.name}</h2>
-                <p className="text-gray-400">₹{item.productId.price}</p>
-                <p className="text-gray-500 text-sm mt-2">
-                  Quantity: {item.quantity}
-                </p>
+        <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          {/* Cart Items List */}
+          <div style={{ flex: '1 1 600px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {cart.items.map((item) => (
+              <div key={item._id} className="card-surface" style={{ display: 'flex', padding: 20, gap: 24, alignItems: 'center' }}>
+                {/* Product Image */}
+                <div style={{ width: 100, height: 100, background: '#f8fafc', borderRadius: 12, padding: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <img src={item.productId.image} alt={item.productId.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                </div>
+
+                {/* Details */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Link to={`/product/${item.productId._id}`} style={{ textDecoration: 'none', color: 'var(--text-primary)' }}>
+                      <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>{item.productId.name}</h3>
+                    </Link>
+                    <span style={{ fontWeight: 800, fontSize: 18 }}>₹{Number(item.totalPrice).toLocaleString('en-IN')}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>₹{Number(item.productId.price).toLocaleString('en-IN')} each</span>
+                    {item.selectedSize && (
+                      <span style={{ fontSize: 12, fontWeight: 700, background: 'var(--surface-2)', padding: '2px 8px', borderRadius: 6, border: '1px solid var(--border)' }}>
+                        Size: {item.selectedSize}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8 }}>
+                    {/* Qty Controls */}
+                    <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', width: 'fit-content', background: '#fff' }}>
+                      <button className="qty-btn" onClick={() => decreaseQuantity(item.productId._id, item.selectedSize)}>
+                        <FaMinus style={{ fontSize: 11 }} />
+                      </button>
+                      <span style={{ fontWeight: 700, fontSize: 15, width: 44, textAlign: 'center' }}>{item.quantity}</span>
+                      <button className="qty-btn" onClick={() => addToCart(item.productId._id, item.selectedSize)}>
+                        <FaPlus style={{ fontSize: 11 }} />
+                      </button>
+                    </div>
+
+                    <button className="btn-icon" onClick={() => { if (confirm('Remove item?')) removeItem(item.productId._id, item.selectedSize); }} style={{ color: 'var(--danger)', borderColor: '#fecaca', width: 36, height: 36 }}>
+                      <FaTrash style={{ fontSize: 14 }} />
+                    </button>
+                  </div>
+                </div>
               </div>
-            </Link>
+            ))}
+          </div>
 
-            {/* Actions */}
-            <div className="flex mt-4 md:mt-0">
-              <button
-                onClick={(event) => {
-                  event.stopPropagation(); 
-                  if (isLoggedIn) {
-                    addToCart(item.productId._id);
-                  } else {
-                    toast.error("Please log in to add items to the cart.");
-                  }
-                }} 
-                className="p-3 bg-green-600 text-white rounded-full hover:bg-green-700 mr-2"
-              >
-                <FaPlus />
-              </button>
-              <button
-               onClick={(event) => {
-                event.stopPropagation(); 
-                if (isLoggedIn) {
-                  decreaseQuantity(item.productId._id);
-                } else {
-                  toast.error("Please log in to add items to the cart.");
-                }
-              }} 
-                className="p-3 bg-yellow-600 text-white rounded-full hover:bg-yellow-700 mx-2"
-              >
-                <FaMinus />
-              </button>
-              <button
-               onClick={(event) => {
-                event.stopPropagation(); 
-                if (isLoggedIn) {
-                  if(confirm("sure want to remove form the cart")){
-                    removeItem(item.productId._id);
-                  }
-                } else {
-                  toast.error("Please log in to add items to the cart.");
-                }
-              }
-            }
-                className="p-3 bg-red-600 text-white rounded-full hover:bg-red-700"
-              >
-                <FaTrash />
-              </button>
+          {/* Order Summary Sidebar */}
+          <div className="card-surface" style={{ flex: '0 0 340px', position: 'sticky', top: 90, padding: 24 }}>
+            <h3 style={{ fontWeight: 800, fontSize: 18, marginBottom: 20 }}>Order Summary</h3>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, fontSize: 15 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
+                <span>Subtotal ({totalQty} items)</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>₹{Number(totalPrice).toLocaleString('en-IN')}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
+                <span>Delivery logic</span>
+                <span style={{ color: 'var(--success)', fontWeight: 600 }}>Free</span>
+              </div>
+
+              <div className="divider" style={{ margin: '8px 0' }} />
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: 20 }}>
+                <span>Total</span>
+                <span style={{ color: 'var(--primary)' }}>₹{Number(totalPrice).toLocaleString('en-IN')}</span>
+              </div>
             </div>
 
-
+            <button className="btn-primary" onClick={() => navigate('/checkout')} style={{ width: '100%', marginTop: 24, padding: '16px', fontSize: 16 }}>
+              Proceed to Checkout <FaArrowRight />
+            </button>
           </div>
-        ))}
-      </div>
-
-      <div className="items-center justify-center flex gap-10 m-8">
-        <button onClick={() => navigate("/Address")}   className="p-3 bg-green-600 text-white rounded-xl hover:bg-green-700" >Checkout</button>
-        <button onClick={()=>{
-          if(confirm("sure want to clear the cart")){
-            clearCart()
-          }
-        }} className="p-3 bg-red-600 text-white rounded-xl hover:bg-red-700" >ClearCart</button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default ShoppingCart;
+export default Cart;

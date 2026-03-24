@@ -54,6 +54,10 @@ const Appstate = (props) => {
   const logoutUser = () => {
     setToken(null);
     setIsLoggedIn(false);
+    setIsAdmin(false);
+    setUser(null);
+    setCart(null);
+    setUserAddress(null);
     setReload1(!reload1);
     localStorage.removeItem("token");
   };
@@ -68,29 +72,25 @@ const Appstate = (props) => {
 
       // Check if the login was successful
       if (response.data.success) {
-        const { token } = response.data;
-        // Set the token and login status
+        const { token, isAdmin } = response.data;
+        // Save the token in localStorage FIRST so getCart/getAddress can read it
+        localStorage.setItem("token", token);
         setToken(token);
         setIsLoggedIn(true);
-        setReload1(!reload1);
-        checkAdmin();
-        // Save the token in localStorage
-        localStorage.setItem("token", token);
+        setIsAdmin(isAdmin); // Direct set from response
+        // Trigger reload to fetch cart, address, profile
+        setReload((prev) => !prev);
         toast.success(response.data.message);
-        return true;
-        // Show success message
+        return { success: true, isAdmin }; // Return both status and role
       }
     } catch (error) {
       // Handle different error scenarios
       if (error.response) {
-        // Server responded with a status other than 200
         const { message } = error.response.data;
         toast.error(message || "Server error. Please try again.");
       } else if (error.request) {
-        // Request was made but no response received
         toast.error("No response from server. Please check your network.");
       } else {
-        // Something else happened
         toast.error(`Login failed: ${error.message}`);
       }
     }
@@ -106,15 +106,15 @@ const Appstate = (props) => {
 
       // Check if the login was successful
       if (response.data.success) {
-        const { token } = response.data;
+        const { token, isAdmin } = response.data;
         // Set the token and login status
         setToken(token);
         setIsLoggedIn(true);
-        setIsAdmin(true);
+        setIsAdmin(isAdmin);
         // Save the token in localStorage
         localStorage.setItem("token", token);
         toast.success(response.data.message);
-        return true; // Login successful
+        return { success: true, isAdmin }; // Consistency
       } else {
         // Handle unexpected success = false cases
         toast.error(
@@ -290,11 +290,16 @@ const Appstate = (props) => {
         setCart(response.data?.cart);
       }
     } catch (err) {
-      console.log("Error in feteching the user cart data ", err);
+      // 404 means no cart yet — that's normal for a new user
+      if (err.response?.status === 404) {
+        setCart(null);
+      } else {
+        console.log("Error in fetching the user cart data ", err);
+      }
     }
   };
 
-  const addToCart = async (productId) => {
+  const addToCart = async (productId, selectedSize = null) => {
     try {
       if (localStorage.getItem("token")) {
         const token = localStorage.getItem("token");
@@ -303,6 +308,7 @@ const Appstate = (props) => {
           `${BASE_URL}/cart/add`,
           {
             productId: productId,
+            selectedSize: selectedSize
           },
           {
             headers: {
@@ -312,15 +318,15 @@ const Appstate = (props) => {
             withCredentials: true,
           }
         );
-        toast.success(response.data.message);
-        setReload(!reload);
+        toast.success(response.data.message, { toastId: "add-to-cart" });
+        setReload((prev) => !prev);
       }
     } catch (err) {
       console.log("Error in addding items in the cart ", err);
     }
   };
 
-  const decreaseQuantity = async (productId) => {
+  const decreaseQuantity = async (productId, selectedSize = null) => {
     try {
       if (localStorage.getItem("token")) {
         const token = localStorage.getItem("token");
@@ -330,6 +336,7 @@ const Appstate = (props) => {
             "Content-Type": "application/json",
             Auth: token,
           },
+          data: { selectedSize }, // Note: GET request with body technically possible but might be ignored by some servers, let's still pass it
           withCredentials: true,
         });
         setReload(!reload);
@@ -338,7 +345,8 @@ const Appstate = (props) => {
       console.log("Error in decreasing the quantity", err);
     }
   };
-  const removeItem = async (productId) => {
+
+  const removeItem = async (productId, selectedSize = null) => {
     try {
       if (localStorage.getItem("token")) {
         const token = localStorage.getItem("token");
@@ -350,6 +358,7 @@ const Appstate = (props) => {
               "Content-Type": "application/json",
               Auth: token,
             },
+            data: { selectedSize },
             withCredentials: true,
           }
         );
@@ -410,10 +419,14 @@ const Appstate = (props) => {
           withCredentials: true,
         });
         setUserAddress(response.data.address);
-        setReload(!reload);
       }
     } catch (err) {
-      console.log("Error in getting the address ", err);
+      // 404 means no address yet — that's normal for a new user
+      if (err.response?.status === 404) {
+        setUserAddress(null);
+      } else {
+        console.log("Error in getting the address ", err);
+      }
     }
   };
   const getOrders = async () => {
@@ -432,6 +445,64 @@ const Appstate = (props) => {
       }
     } catch (err) {
       console.log("Error in getting the address ", err);
+    }
+  };
+
+  const updateOrderStatus = async (id, status) => {
+    try {
+      if (localStorage.getItem("token")) {
+        const token = localStorage.getItem("token");
+        let response = await axios.put(`${BASE_URL}/payment/order/status/${id}`, { orderStatus: status }, {
+          headers: {
+            "Content-Type": "application/json",
+            Auth: token,
+          },
+          withCredentials: true,
+        });
+        toast.success(response.data.message);
+        setReload(!reload);
+        return true;
+      }
+    } catch (err) {
+      toast.error("Failed to update status");
+      console.log("Error updating order status:", err);
+      return false;
+    }
+  };
+
+  const cancelOrder = async (id) => {
+    try {
+      if (localStorage.getItem("token")) {
+        const token = localStorage.getItem("token");
+        let response = await axios.put(`${BASE_URL}/payment/order/cancel/${id}`, {}, {
+          headers: { "Content-Type": "application/json", Auth: token },
+          withCredentials: true,
+        });
+        toast.success(response.data.message || "Order Cancelled. Your money will be refunded to your account within 2-3 working days.");
+        setReload(!reload);
+        return true;
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to cancel order");
+      return false;
+    }
+  };
+
+  const updateRefundStatus = async (id, status) => {
+    try {
+      if (localStorage.getItem("token")) {
+        const token = localStorage.getItem("token");
+        let response = await axios.put(`${BASE_URL}/payment/order/refund/${id}`, { refundStatus: status }, {
+          headers: { "Content-Type": "application/json", Auth: token },
+          withCredentials: true,
+        });
+        toast.success(response.data.message);
+        setReload(!reload);
+        return true;
+      }
+    } catch (err) {
+      toast.error("Failed to update refund status");
+      return false;
     }
   };
 
@@ -533,6 +604,9 @@ const Appstate = (props) => {
         updateProfile,
         handleDeleteUser,
         toggleAdminStatus,
+        updateOrderStatus,
+        cancelOrder,
+        updateRefundStatus,
       }}
     >
       {props.children}

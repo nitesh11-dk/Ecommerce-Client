@@ -1,102 +1,136 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { FaSearch, FaShoppingCart } from 'react-icons/fa';
+import React, { useState, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import AppContext from "../context/AppContext";
+import { FaSearch, FaShoppingCart, FaUserCircle, FaShieldAlt, FaBars, FaTimes, FaBoxOpen } from 'react-icons/fa';
+import AppContext from '../context/AppContext';
 import { toast } from 'react-toastify';
-import { GrUserAdmin } from "react-icons/gr";
-import { FaUserAstronaut } from "react-icons/fa";
-
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { setSearchFilter, isLoggedIn, logoutUser,cart ,isAdmin } = useContext(AppContext);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { setSearchFilter, isLoggedIn, logoutUser, cart, isAdmin } = useContext(AppContext);
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const cartCount = cart?.items?.length || 0;
 
-  let navigate = useNavigate();
-  const handleSearchChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    setSearchFilter(query); 
+  const handleSearch = (e) => {
+    const q = e.target.value;
+    setSearchQuery(q);
+    setSearchFilter(q);
   };
 
-const location = useLocation();
+  const handleLogout = () => {
+    navigate('/');
+    setTimeout(() => {
+      logoutUser();
+      toast.success('Logged out successfully');
+      window.scrollTo(0, 0);
+    }, 10);
+  };
+
   return (
-    <div>
-      <div className="navbar bg-base-200 sm:px-20 sticky top-0 z-50 shadow-md">
-        <div className="navbar-start flex  gap-2">
-          <Link to="/" className="btn btn-ghost normal-case text-xl">Electro-Mart</Link>
-        </div>
-
-        <div className="navbar-center hidden lg:flex">
-          <div className="form-control w-full max-w-md relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search products..."
-              className="input input-bordered w-full pl-10"
-            />
-            <FaSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
-          </div>
-        </div>
-
-        <div className="navbar-end flex gap-2">
-          {isLoggedIn ? (
-            <>
-              <Link to="/cart" className="btn btn-ghost relative">
-          <span className={` h-6 w-6  absolute flex items-center justify-center ${cart?.items?.length >0 ? 'visible' : 'hidden'} top-0 right-0 rounded-full `}>
-           { cart &&  cart?.items?.length
-           }
-          </span>
-            <FaShoppingCart className="text-xl" />
+    <>
+      {/* ── Main Navbar ── */}
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 999,
+        background: '#fff',
+        borderBottom: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-sm)',
+      }}>
+        <div style={{
+          maxWidth: 1280, margin: '0 auto',
+          padding: '0 24px',
+          display: 'flex', alignItems: 'center',
+          height: 64, gap: 16,
+        }}>
+          {/* Logo */}
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <span style={{
+              background: 'linear-gradient(135deg, #1e40af, #7c3aed)',
+              borderRadius: 10, width: 34, height: 34,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 18,
+            }}>👟</span>
+            <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+              Sole<span style={{ color: 'var(--primary)' }}>Step</span>
+            </span>
           </Link>
-              <Link to="/profile">
-            {
-              isAdmin ? (<GrUserAdmin className='text-3xl ' />):(<FaUserAstronaut  className='text-3xl '/>)
-            }
-          </Link>
-              <button 
-                onClick={() => {
-                  logoutUser();
-                  toast.success("Logout Successfully");
-                  navigate('/');
-                }} 
-                className="btn btn-outline">
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/register" className="btn btn-outline">SignUp</Link>
-              <Link to="/login" className="btn btn-outline">SignIn</Link>
-            </>
+
+          {/* Search */}
+          {!isAdmin && (
+            <div className="nav-search" style={{ flex: 1, maxWidth: 480, position: 'relative' }}>
+              <FaSearch style={{
+                position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)',
+                color: 'var(--text-muted)', fontSize: 14,
+              }} />
+              <input
+                className="form-input"
+                type="text"
+                value={searchQuery}
+                onChange={handleSearch}
+                placeholder="Search products, brands, categories…"
+                style={{ paddingLeft: 38, height: 40, fontSize: 14 }}
+              />
+            </div>
           )}
 
-        
+          {/* Nav Actions */}
+          <nav style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', flexShrink: 0 }}>
+            {isLoggedIn ? (
+              <>
+                {/* Regular User Nav Items - Hidden for Admins */}
+                {!isAdmin && (
+                  <>
+                    {/* Cart */}
+                    <Link to="/cart" style={{ position: 'relative', textDecoration: 'none' }}
+                      title="Shopping Cart">
+                      <button className="btn-icon" style={{ width: 40, height: 40 }}>
+                        <FaShoppingCart style={{ fontSize: 17 }} />
+                        {cartCount > 0 && (
+                          <span style={{
+                            position: 'absolute', top: -4, right: -4,
+                            background: 'var(--accent)', color: '#fff',
+                            borderRadius: 99, fontSize: 10, fontWeight: 800,
+                            minWidth: 18, height: 18, padding: '0 4px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            lineHeight: 1, border: '2px solid #fff',
+                          }}>{cartCount}</span>
+                        )}
+                      </button>
+                    </Link>
+
+                    {/* Profile */}
+                    <Link to="/orders" style={{ textDecoration: 'none' }} title="My Orders">
+                      <button className="btn-icon" style={{ width: 40, height: 40 }}>
+                        <FaBoxOpen style={{ fontSize: 17 }} />
+                      </button>
+                    </Link>
+                    <Link to="/profile" style={{ textDecoration: 'none' }} title="Profile">
+                      <button className="btn-icon" style={{ width: 40, height: 40 }}>
+                        <FaUserCircle style={{ fontSize: 18 }} />
+                      </button>
+                    </Link>
+
+                    <button className="btn-outline" onClick={handleLogout} style={{ padding: '7px 16px', fontSize: 13 }}>
+                      Logout
+                    </button>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <Link to="/register" className="btn-outline" style={{ padding: '7px 16px', fontSize: 13 }}>
+                  Sign Up
+                </Link>
+                <Link to="/login" className="btn-primary" style={{ padding: '7px 16px', fontSize: 13 }}>
+                  Sign In
+                </Link>
+              </>
+            )}
+          </nav>
         </div>
-      </div>
-
-      {
-         (location.pathname === '/') && (
-
-          <div className="bg-base400 flex items-center justify-center p-4">
-    {isAdmin && (
-      <Link to={'/addproduct'} className="px-4 py-2 rounded-xl bg-base-300 mr-8">
-        Add Product
-      </Link>
-    )}
-    <div className="flex justify-between gap-10 items-center">
-      {isAdmin && (
-        <Link to={'/adminpanel'} className="px-4 py-2 rounded-xl bg-gray-500 mr-8">
-          ADMIN
-        </Link>
-      )}
-    </div>
-  </div>
-      
-         )  
-      }
-    </div>
+      </header>
+    </>
   );
 };
 
