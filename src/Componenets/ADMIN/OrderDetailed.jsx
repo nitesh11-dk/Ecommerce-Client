@@ -70,17 +70,17 @@ const OrderDetailed = () => {
                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Update Delivery Status</label>
                  <select
                    value={order.orderStatus || 'Processing'}
-                   disabled={order.orderStatus === 'Cancelled'}
+                   disabled={order.orderStatus === 'Cancelled' || order.orderStatus === 'Delivered'}
                    onChange={async (e) => {
                       const success = await updateOrderStatus(order._id, e.target.value);
                       if (success) fetchOrders();
                    }}
                    className={`w-full px-3 py-2 text-sm rounded-lg border focus:ring-2 focus:outline-none transition-all font-bold ${
-                     order.orderStatus === 'Cancelled' 
+                     order.orderStatus === 'Cancelled' || order.orderStatus === 'Delivered'
                      ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed' 
                      : 'bg-white border-slate-200 text-indigo-700 focus:ring-indigo-100'
                    }`}
-                 >
+                   >
                    {PREDEFINED_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                  </select>
                </div>
